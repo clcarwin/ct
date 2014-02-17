@@ -11,7 +11,7 @@ batch_size = 100
 num_batches = num_train / batch_size
 learning_rate = 0.1
 num_hidden = 1000
-epochs = 5
+epochs = 20
 
 X = X:cuda():t()
 X_te = X_te:cuda():t()
@@ -49,7 +49,7 @@ for i = 1,epochs do
       -- forward pass
       ct.dot(W1, X_tr, a2)
       ct.add_mat_vect(a2, b1, 1)
-      ct.tanh(a2)
+      ct.tanh(a2, a2)
 
       ct.dot(W2, a2, a3)
       ct.add_mat_vect(a3, b2, 1)
@@ -58,7 +58,7 @@ for i = 1,epochs do
       -- backward pass
       ct.sub(a3, y_tr, d3)
       ct.dot(W2, d3, d2, 1)
-      ct.mult_by_tanh_grad(d2, a2)
+      ct.mult_by_tanh_grad(d2, a2, d2)
 
       ct.dot(d3, a2, dW2, 0, 1)
       ct.dot(d2, X_tr, dW1, 0, 1)
@@ -82,7 +82,7 @@ ct.add_mat_vect(a2t, b1, 1)
 
 ct.dot(W1, X_te, a2t)
 ct.add_mat_vect(a2t, b1, 1)
-ct.tanh(a2t)
+ct.tanh(a2t, a2t)
 
 ct.dot(W2, a2t, a3t)
 ct.add_mat_vect(a3t, b2, 1)

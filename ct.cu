@@ -168,9 +168,21 @@ template<class Op>
 int transform1(Op op, lua_State *L)
 {
     THCudaTensor *A = (THCudaTensor*)luaT_checkudata(L, 1, "torch.CudaTensor");
-    int len = THCudaTensor_nElement(A);
-    thrust::device_ptr<float> p(THCudaTensor_data(A));
-    thrust::transform(p, p + len, p, op);
+    THCudaTensor *B = (THCudaTensor*)luaT_checkudata(L, 2, "torch.CudaTensor");
+    int lenA = THCudaTensor_nElement(A);
+    int lenB = THCudaTensor_nElement(B);
+
+    if (!is_cm(A) || !is_cm(B)) {
+        luaL_error(L, "Matrices not in column major order");
+    }
+
+	if (lenA != lenB) {
+		luaL_error(L, "Size mismatch");
+	}
+
+    thrust::device_ptr<float> pA(THCudaTensor_data(A));
+    thrust::device_ptr<float> pB(THCudaTensor_data(B));
+    thrust::transform(pA, pA + lenA, pB, op);
     return 0;
 }
 
@@ -179,19 +191,23 @@ int transform2(Op op, lua_State *L)
 {
     THCudaTensor *A = (THCudaTensor*)luaT_checkudata(L, 1, "torch.CudaTensor");
     THCudaTensor *B = (THCudaTensor*)luaT_checkudata(L, 2, "torch.CudaTensor");
-    int len = THCudaTensor_nElement(A);
+    THCudaTensor *C = (THCudaTensor*)luaT_checkudata(L, 3, "torch.CudaTensor");
+    int lenA = THCudaTensor_nElement(A);
+    int lenB = THCudaTensor_nElement(B);
+    int lenC = THCudaTensor_nElement(C);
 
-    if (!(is_cm(A) && is_cm(B))) {
+    if (!is_cm(A) || !is_cm(B) || !is_cm(C)) {
         luaL_error(L, "Matrices not in column major order");
     }
 
-    if (!(A->size[0] == B->size[0] && A->size[1] == B->size[1])) {
+    if (lenA != lenB || lenA != lenC) {
         luaL_error(L, "Size mismatch");
     }
 
     thrust::device_ptr<float> pA(THCudaTensor_data(A));
     thrust::device_ptr<float> pB(THCudaTensor_data(B));
-    thrust::transform(pA, pA + len, pB, pA, op);
+    thrust::device_ptr<float> pC(THCudaTensor_data(C));
+    thrust::transform(pA, pA + lenA, pB, pC, op);
     return 0;
 }
 
