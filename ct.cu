@@ -88,6 +88,22 @@ public:
     }
 };
 
+struct opTanh {
+public:
+    __device__ float operator()(float x)
+    {
+        return 2 / (1 + exp(-2 * x)) - 1;
+    }
+};
+
+struct opTanhGrad {
+public:
+    __device__ float operator()(float x, float y)
+    {
+        return x * (1 - y * y);
+    }
+};
+
 /* Is A in column major format? */
 int is_cm(THCudaTensor *A)
 {
@@ -148,16 +164,18 @@ int sgemm(lua_State *L)
     return 0;
 }
 
-int sigmoid(lua_State *L)
+template<class Op>
+int transform1(Op op, lua_State *L)
 {
     THCudaTensor *A = (THCudaTensor*)luaT_checkudata(L, 1, "torch.CudaTensor");
     int len = THCudaTensor_nElement(A);
     thrust::device_ptr<float> p(THCudaTensor_data(A));
-    thrust::transform(p, p + len, p, opSigmoid());
+    thrust::transform(p, p + len, p, op);
     return 0;
 }
 
-int mult_by_sigmoid_grad(lua_State *L)
+template<class Op>
+int transform2(Op op, lua_State *L)
 {
     THCudaTensor *A = (THCudaTensor*)luaT_checkudata(L, 1, "torch.CudaTensor");
     THCudaTensor *B = (THCudaTensor*)luaT_checkudata(L, 2, "torch.CudaTensor");
@@ -173,8 +191,28 @@ int mult_by_sigmoid_grad(lua_State *L)
 
     thrust::device_ptr<float> pA(THCudaTensor_data(A));
     thrust::device_ptr<float> pB(THCudaTensor_data(B));
-    thrust::transform(pA, pA + len, pB, pA, opSigmoidGrad());
+    thrust::transform(pA, pA + len, pB, pA, op);
     return 0;
+}
+
+int sigmoid(lua_State *L)
+{
+	return transform1(opSigmoid(), L);
+}
+
+int mult_by_sigmoid_grad(lua_State *L)
+{
+	return transform2(opSigmoidGrad(), L);
+}
+
+int tanh(lua_State *L)
+{
+	return transform1(opTanh(), L);
+}
+
+int mult_by_tanh_grad(lua_State *L)
+{
+	return transform2(opTanhGrad(), L);
 }
 
 int _exp(lua_State *L)
@@ -366,7 +404,9 @@ static const struct luaL_Reg funcs[] = {
     {"cublas_init", cublas_init},
     {"sgemm", sgemm},
     {"sigmoid", sigmoid},
-    {"mult_by_sigmoid_grad", sigmoid},
+    {"mult_by_sigmoid_grad", mult_by_sigmoid_grad},
+    {"tanh", tanh},
+    {"mult_by_tanh_grad", mult_by_tanh_grad},
     {"exp", _exp},
     {"add_mat_vect", add_mat_vect},
     {"sub_mat_vect", sub_mat_vect},
