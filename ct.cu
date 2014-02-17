@@ -123,7 +123,7 @@ int cublas_init(lua_State *L)
     return 0;
 }
 
-int sgemm(lua_State *L)
+int dot(lua_State *L)
 {
     THCudaTensor *A = (THCudaTensor*)luaT_checkudata(L, 1, "torch.CudaTensor");
     THCudaTensor *B = (THCudaTensor*)luaT_checkudata(L, 2, "torch.CudaTensor");
@@ -402,7 +402,7 @@ int _max(lua_State *L)
 
 static const struct luaL_Reg funcs[] = {
     {"cublas_init", cublas_init},
-    {"sgemm", sgemm},
+    {"dot", dot},
     {"sigmoid", sigmoid},
     {"mult_by_sigmoid_grad", mult_by_sigmoid_grad},
     {"tanh", tanh},
