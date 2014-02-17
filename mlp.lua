@@ -13,8 +13,6 @@ learning_rate = 0.1
 num_hidden = 1000
 epochs = 5
 
-ct.cublas_init()
-
 X = X:cuda():t()
 X_te = X_te:cuda():t()
 y = torch.eye(10):index(1, y):cuda():t()
