@@ -6,6 +6,10 @@ function ct.softmax(A, x)
    ct.div_mat_vect(A, x, 0)
 end
 
+function ct.sub(x, y, z)
+   ct.add(x, y, z, -1)
+end
+
 function ct.rand(n, m)
    return ct.empty(n, m):uniform()
 end
