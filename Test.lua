@@ -6,23 +6,24 @@ function testJacobian(module, input, x, dx)
    x = x or input
 
    local sx = torch.CudaTensor(x:storage())
-   local soutput = torch.CudaTensor(module.output:storage())
-   local jacobian = torch.Tensor(sx:nElement(), soutput:nElement())
-   local jacobian_hat = torch.Tensor(sx:nElement(), soutput:nElement())
+   local gradInput = ct.emptyAs(module.output)
+   local sgradInput = torch.CudaTensor(gradInput:storage())
+   local jacobian = torch.Tensor(sx:nElement(), gradInput:nElement())
+   local jacobian_hat = torch.Tensor(sx:nElement(), gradInput:nElement())
 
    -- Build Jacobian from module's updateGradInput
-   soutput:zero()
-   for i = 1,soutput:nElement() do
-      soutput[i] = 1
-      module:updateGradInput(input, module.output)
+   sgradInput:zero()
+   for i = 1,gradInput:nElement() do
+      sgradInput[i] = 1
+      module:updateGradInput(input, gradInput)
       if dx then
          dx:zero()
-         module:accGradParameters(input, module.output)
+         module:accGradParameters(input, gradInput)
          jacobian:select(2, i):copy(dx)
       else
          jacobian:select(2, i):copy(module.gradInput:t())
       end
-      soutput[i] = 0
+      sgradInput[i] = 0
    end
 
    -- Numerically estimate the Jacobian
