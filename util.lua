@@ -14,6 +14,10 @@ function ct.rand(n, m)
    return ct.empty(n, m):uniform()
 end
 
+function ct.randn(n, m)
+   return ct.empty(n, m):normal()
+end
+
 function ct.zeros(n, m)
    return ct.empty(n, m):zero()
 end
