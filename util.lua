@@ -1,3 +1,11 @@
+function ct.softmax(A, x)
+   ct.max(A, x, 0)
+   ct.sub_mat_vect(A, x, 0)
+   ct.exp(A)
+   ct.sum(A, x, 0)
+   ct.div_mat_vect(A, x, 0)
+end
+
 function ct.rand(n, m)
    return ct.empty(n, m):uniform()
 end

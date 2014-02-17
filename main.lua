@@ -2,7 +2,7 @@ require 'torch'
 require 'ct'
 require 'sys'
 
-test = 'reduce'
+test = 'softmax'
 
 if test == 'sgemm' then
    A = ct.rand(3, 100)
@@ -68,4 +68,11 @@ elseif test == 'reduce' then
    print(A)
    print(b)
    print(c)
+
+elseif test == 'softmax' then
+   A = ct.rand(5, 3)
+   x = ct.empty(1, 3)
+
+   ct.softmax(A, x)
+   print(x)
 end
