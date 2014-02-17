@@ -418,7 +418,7 @@ static const struct luaL_Reg funcs[] = {
     {NULL, NULL}
 };
 
-extern "C" int luaopen_ct(lua_State *L) {
+extern "C" int luaopen_libct(lua_State *L) {
     luaL_openlib(L, "ct", funcs, 0);
     return 1;
 }

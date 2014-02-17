@@ -1,5 +1,6 @@
 require 'torch'
 require 'cutorch'
-require 'ct'
 
-require 'util'
+require 'libct'
+
+include('util.lua')

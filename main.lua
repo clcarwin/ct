@@ -1,5 +1,5 @@
 require 'torch'
-require 'init'
+require 'ct'
 require 'sys'
 
 test = 'reduce'
