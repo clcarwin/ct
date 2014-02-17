@@ -11,7 +11,7 @@ batch_size = 100
 num_batches = num_train / batch_size
 learning_rate = 0.1
 num_hidden = 1000
-epochs = 10
+epochs = 5
 
 ct.cublas_init()
 
@@ -30,10 +30,10 @@ W2 = ct.empty(i2, i1):uniform(-w_bound, w_bound)
 b2 = ct.zeros(1, i2)
 
 -- temp storage
-a2 = ct.empty(num_hidden, batch_size)
+a2 = ct.empty(i1, batch_size)
 a3 = ct.empty(i2, batch_size)
 d3 = ct.empty(i2, batch_size)
-d2 = ct.empty(num_hidden, batch_size)
+d2 = ct.empty(i1, batch_size)
 dW1 = ct.empty(i1, i0)
 db1 = ct.empty(1, i1)
 dW2 = ct.empty(i2, i1)
@@ -41,6 +41,7 @@ db2 = ct.empty(1, i2)
 softmax_tmp = ct.empty(1, batch_size)
 
 for i = 1,epochs do
+   print(i)
    for batch = 1,num_batches do
       s = (batch - 1) * batch_size
 
@@ -74,7 +75,7 @@ for i = 1,epochs do
    end
 end
 
-a2t = ct.empty(num_hidden, X_te:size(2))
+a2t = ct.empty(i1, X_te:size(2))
 a3t = ct.empty(i2, X_te:size(2))
 softmax_tmpt = ct.empty(1, X_te:size(2))
 
