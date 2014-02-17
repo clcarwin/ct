@@ -29,3 +29,7 @@ end
 function ct.empty(n, m)
    return torch.Tensor():cuda():resize(m, n):t()
 end
+
+function ct.emptyAs(A)
+   return ct.empty(A:size(1), A:size(2))
+end
