@@ -13,7 +13,6 @@ extern "C" {
 
 #include <thrust/device_vector.h>
 #include <thrust/transform.h>
-#include <thrust/functional.h>
 
 #define TB 128
 
