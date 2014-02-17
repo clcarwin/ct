@@ -20,18 +20,18 @@ function LinearCT:reset()
    self.bias:uniform(-stdv, stdv)
 end
 
-function Linear:updateOutput(input)
+function LinearCT:updateOutput(input)
    ct.dot(self.weight, input, self.output)
    ct.add_mat_vect(a2, self.bias, 1)
    return self.output
 end
 
-function Linear:updateGradInput(input, gradOutput)
+function LinearCT:updateGradInput(input, gradOutput)
    ct.dot(self.weight, self.gradOutput, self.gradInput)
    return self.gradInput
 end
 
-function Linear:accGradParameters(input, gradOutput)
+function LinearCT:accGradParameters(input, gradOutput)
    ct.dot(gradOutput, input, self.gradWeight, 0, 1)
    ct.sum(gradOutput, self.gradBias, 1)
 end
