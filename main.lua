@@ -20,11 +20,11 @@ elseif test == 'sigmoid' then
    ct.sigmoid(A)
    print(A)
 
-elseif test == 'mult_by_sigmoid_grad' then
+elseif test == 'mult_by_sigmoid_deriv' then
    A = ct.rand(3, 4)
    B = ct.rand(3, 4)
 
-   ct.mult_by_sigmoid_grad(A, B)
+   ct.mult_by_sigmoid_deriv(A, B)
    print(A)
 
 elseif test == 'exp' then

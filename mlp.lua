@@ -58,7 +58,7 @@ for i = 1,epochs do
       -- backward pass
       ct.sub(a3, y_tr, d3)
       ct.dot(W2, d3, d2, 1)
-      ct.mult_by_tanh_grad(d2, a2, d2)
+      ct.mult_by_tanh_deriv(d2, a2, d2)
 
       ct.dot(d3, a2, dW2, 0, 1)
       ct.dot(d2, X_tr, dW1, 0, 1)

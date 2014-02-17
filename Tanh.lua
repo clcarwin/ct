@@ -14,6 +14,6 @@ end
 
 function Tanh:updateGradInput(input, gradOutput)
    self.gradInput = self.gradInput or ct.emptyAs(input)
-   ct.mult_by_tanh_grad(gradOutput, self.output, self.gradInput)
+   ct.mult_by_tanh_deriv(gradOutput, self.output, self.gradInput)
    return self.gradInput
 end

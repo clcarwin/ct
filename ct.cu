@@ -80,7 +80,7 @@ public:
     }
 };
 
-struct opSigmoidGrad {
+struct opSigmoidDeriv {
 public:
     __device__ float operator()(float x, float y)
     {
@@ -96,7 +96,7 @@ public:
     }
 };
 
-struct opTanhGrad {
+struct opTanhDeriv {
 public:
     __device__ float operator()(float x, float y)
     {
@@ -216,9 +216,9 @@ int sigmoid(lua_State *L)
 	return transform1(opSigmoid(), L);
 }
 
-int mult_by_sigmoid_grad(lua_State *L)
+int mult_by_sigmoid_deriv(lua_State *L)
 {
-	return transform2(opSigmoidGrad(), L);
+	return transform2(opSigmoidDeriv(), L);
 }
 
 int tanh(lua_State *L)
@@ -226,9 +226,9 @@ int tanh(lua_State *L)
 	return transform1(opTanh(), L);
 }
 
-int mult_by_tanh_grad(lua_State *L)
+int mult_by_tanh_deriv(lua_State *L)
 {
-	return transform2(opTanhGrad(), L);
+	return transform2(opTanhDeriv(), L);
 }
 
 int _exp(lua_State *L)
@@ -420,9 +420,9 @@ static const struct luaL_Reg funcs[] = {
     {"cublas_init", cublas_init},
     {"dot", dot},
     {"sigmoid", sigmoid},
-    {"mult_by_sigmoid_grad", mult_by_sigmoid_grad},
+    {"mult_by_sigmoid_deriv", mult_by_sigmoid_deriv},
     {"tanh", tanh},
-    {"mult_by_tanh_grad", mult_by_tanh_grad},
+    {"mult_by_tanh_deriv", mult_by_tanh_deriv},
     {"exp", _exp},
     {"add_mat_vect", add_mat_vect},
     {"sub_mat_vect", sub_mat_vect},
