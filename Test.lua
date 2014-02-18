@@ -53,7 +53,7 @@ function testCriterion(module, input, target)
    module:forward(input, target)
    module:backward(input, target)
 
-   local sinput = torch.Tensor(input:storage())
+   local sinput = torch.CudaTensor(input:storage())
    local grad_hat = torch.Tensor(sinput:nElement())
    for i = 1,sinput:nElement() do
       orig = sinput[i]
@@ -69,5 +69,8 @@ function testCriterion(module, input, target)
       sinput[i] = orig
    end
 
-   return module.gradInput:add(-1, grad_hat):abs():max()
+   print(grad_hat:resize(3, 5))
+   print(module.gradInput:t())
+
+   return module.gradInput:t():double():add(-1, grad_hat):abs():max()
 end
