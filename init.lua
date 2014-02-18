@@ -6,6 +6,7 @@ require 'libct'
 
 include('Linear.lua')
 include('Tanh.lua')
+include('CCECriterion.lua')
 
 include('util.lua')
 
