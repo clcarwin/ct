@@ -246,9 +246,10 @@ int cce(lua_State *L)
 
 	transform2(opCCE(), L);
 	thrust::device_ptr<float> pC(THCudaTensor_data(C));
-	thrust::reduce(pC, pC + THCudaTensor_nElement(C));
+	float sum = thrust::reduce(pC, pC + THCudaTensor_nElement(C));
 	
-	return 0;
+	lua_pushnumber(L, -sum);
+	return 1;
 }
 
 int _exp(lua_State *L)
