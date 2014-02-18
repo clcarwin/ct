@@ -65,6 +65,16 @@ public:
 	}
 };
 
+struct opSMul {
+	float alpha;
+public:
+	opSMul(float alpha_) : alpha(alpha_) {};
+	__device__ float operator()(float x)
+	{
+		return alpha * x;
+	}
+};
+
 struct opExp {
 public:
 	__device__ float operator()(float x)
@@ -257,6 +267,12 @@ int _exp(lua_State *L)
 	return transform1(opExp(), L);
 }
 
+int smul(lua_State *L)
+{
+	float alpha = luaL_checknumber(L, 3);
+	return transform1(opSMul(alpha), L);
+}
+
 /* What a crazy bug!
  *
  *
@@ -441,6 +457,7 @@ static const struct luaL_Reg funcs[] = {
 	{"div_mat_vect", div_mat_vect},
 	{"dot", dot},
 	{"exp", _exp},
+	{"smul", smul},
 	{"max", _max},
 	{"mult_by_sigmoid_deriv", mult_by_sigmoid_deriv},
 	{"mult_by_tanh_deriv", mult_by_tanh_deriv},
