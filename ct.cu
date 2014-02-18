@@ -107,9 +107,9 @@ public:
 
 struct opCCE {
 public:
-	__device__ float operator()(float x, float y)
+	__device__ float operator()(float input, float target)
 	{
-		return x > 0 ? x * log(y) : 0;
+		return target > 0 ? target * log(input) : 0;
 	}
 };
 
@@ -253,11 +253,7 @@ int cce(lua_State *L)
 
 int _exp(lua_State *L)
 {
-	THCudaTensor *A = (THCudaTensor*)luaT_checkudata(L, 1, "torch.CudaTensor");
-	int len = THCudaTensor_nElement(A);
-	thrust::device_ptr<float> p(THCudaTensor_data(A));
-	thrust::transform(p, p + len, p, opExp());
-	return 0;
+	return transform1(opExp(), L);
 }
 
 /* What a crazy bug!
