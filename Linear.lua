@@ -23,7 +23,7 @@ end
 function Linear:updateOutput(input)
    self.output = self.output or ct.empty(self.weight:size(1), input:size(2))
    ct.dot(self.weight, input, self.output)
-   ct.add_mat_vect(self.output, self.bias, 1)
+   ct.add_mat_vect(self.output, self.bias, self.output, 1)
    return self.output
 end
 

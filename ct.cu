@@ -281,12 +281,12 @@ int smul(lua_State *L)
  *
  */
 template <class Op, int axis>
-__global__ void kMatVect(Op op, float *A, float *x, int len, int size0)
+__global__ void kMatVect(Op op, float *A, float *x, float *B, int len, int size0)
 {
 	int i = blockIdx.x * blockDim.x + threadIdx.x;
 	if (i < len) {
-		if (axis == 0) A[i] = op(A[i], x[i / size0]);
-		if (axis == 1) A[i] = op(A[i], x[i % size0]);
+		if (axis == 0) B[i] = op(A[i], x[i / size0]);
+		if (axis == 1) B[i] = op(A[i], x[i % size0]);
 	}
 }
 
@@ -295,10 +295,15 @@ int mat_vect(Op op, lua_State *L)
 {
 	THCudaTensor *A = (THCudaTensor*)luaT_checkudata(L, 1, "torch.CudaTensor");
 	THCudaTensor *x = (THCudaTensor*)luaT_checkudata(L, 2, "torch.CudaTensor");
-	int axis = luaL_checkint(L, 3);
+	THCudaTensor *B = (THCudaTensor*)luaT_checkudata(L, 3, "torch.CudaTensor");
+	int axis = luaL_checkint(L, 4);
 
-	if (!is_cm(A)) {
+	if (!is_cm(A) || !is_cm(B)) {
 		luaL_error(L, "Matrix not in column major order");
+	}
+
+	if (THCudaTensor_nElement(A) != THCudaTensor_nElement(B)) {
+		luaL_error(L, "Size mismatch");
 	}
 	
 	int len = THCudaTensor_nElement(A);
@@ -306,12 +311,12 @@ int mat_vect(Op op, lua_State *L)
 		if (A->size[1] != THCudaTensor_nElement(x)) {
 			luaL_error(L, "Size mismatch");
 		}
-		kMatVect<Op, 0><<<(len - 1) / TB + 1, TB>>>(op, THCudaTensor_data(A), THCudaTensor_data(x), len, A->size[0]);
+		kMatVect<Op, 0><<<(len - 1) / TB + 1, TB>>>(op, THCudaTensor_data(A), THCudaTensor_data(x), THCudaTensor_data(B), len, A->size[0]);
 	} else if (axis == 1) {
 		if (A->size[0] != THCudaTensor_nElement(x)) {
 			luaL_error(L, "Size mismatch");
 		}
-		kMatVect<Op, 1><<<(len - 1) / TB + 1, TB>>>(op, THCudaTensor_data(A), THCudaTensor_data(x), len, A->size[0]);
+		kMatVect<Op, 1><<<(len - 1) / TB + 1, TB>>>(op, THCudaTensor_data(A), THCudaTensor_data(x), THCudaTensor_data(B), len, A->size[0]);
 	}
 	
 	checkCudaError(L);

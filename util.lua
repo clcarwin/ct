@@ -1,10 +1,10 @@
 -- B = softmax(A), x is temporary storage
 function ct.softmax(A, B, x)
    ct.max(A, x, 0)
-   ct.sub_mat_vect(A, x, 0)
-   ct.exp(A, B)
+   ct.sub_mat_vect(A, x, B, 0)
+   ct.exp(B, B)
    ct.sum(B, x, 0)
-   ct.div_mat_vect(B, x, 0)
+   ct.div_mat_vect(B, x, B, 0)
 end
 
 function ct.sub(x, y, z)

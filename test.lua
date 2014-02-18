@@ -19,21 +19,21 @@ function test.Tanh()
    assert(testJacobian(m, i) < 1e-3)
 end
 
-function test.CCECriterion()
-   m = ct.CCECriterion()
-   i = ct.randn(5, 6)
-   inds = (torch.rand(6) * 5 + 1):long()
-   t = torch.eye(5):index(1, inds):cuda():t()
-
-   print(testCriterion(m, i, t))
-end
-
 function test.MSECriterion()
    m = ct.MSECriterion()
    i = ct.randn(2, 5)
    t = ct.randn(2, 5)
 
    assert(testCriterion(m, i, t) < 1e-2)
+end
+
+function test.CCECriterion()
+   m = ct.CCECriterion()
+   i = ct.randn(5, 6)
+   inds = (torch.rand(6) * 5 + 1):long()
+   t = torch.eye(5):index(1, inds):cuda():t()
+
+   assert(testCriterion(m, i, t) < 1e-3)
 end
 
 for k, v in pairs(test) do

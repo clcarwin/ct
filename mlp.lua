@@ -48,11 +48,11 @@ for i = 1,epochs do
 
       -- forward pass
       ct.dot(W1, X_tr, a2)
-      ct.add_mat_vect(a2, b1, 1)
+      ct.add_mat_vect(a2, b1, a2, 1)
       ct.tanh(a2, a2)
 
       ct.dot(W2, a2, a3)
-      ct.add_mat_vect(a3, b2, 1)
+      ct.add_mat_vect(a3, b2, a3, 1)
       ct.softmax(a3, a3, tmp_softmax)
 
       -- backward pass
@@ -78,14 +78,14 @@ a3t = ct.empty(i2, X_te:size(2))
 tmp_softmaxt = ct.empty(1, X_te:size(2))
 
 ct.dot(W1, X_te, a2t)
-ct.add_mat_vect(a2t, b1, 1)
+ct.add_mat_vect(a2t, b1, a2t, 1)
 
 ct.dot(W1, X_te, a2t)
-ct.add_mat_vect(a2t, b1, 1)
+ct.add_mat_vect(a2t, b1, a2t, 1)
 ct.tanh(a2t, a2t)
 
 ct.dot(W2, a2t, a3t)
-ct.add_mat_vect(a3t, b2, 1)
+ct.add_mat_vect(a3t, b2, a3t, 1)
 ct.softmax(a3t, a3t, tmp_softmaxt)
 
 _, p = a3t:float():max(1)
