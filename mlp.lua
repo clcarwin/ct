@@ -36,7 +36,7 @@ dW1 = ct.empty(i1, i0)
 db1 = ct.empty(1, i1)
 dW2 = ct.empty(i2, i1)
 db2 = ct.empty(1, i2)
-softmax_tmp = ct.empty(1, batch_size)
+tmp_softmax = ct.empty(1, batch_size)
 
 for i = 1,epochs do
    print(i)
@@ -53,7 +53,7 @@ for i = 1,epochs do
 
       ct.dot(W2, a2, a3)
       ct.add_mat_vect(a3, b2, 1)
-      ct.softmax(a3, softmax_tmp)
+      ct.softmax(a3, a3, tmp_softmax)
 
       -- backward pass
       ct.sub(a3, y_tr, d3)
@@ -75,7 +75,7 @@ end
 
 a2t = ct.empty(i1, X_te:size(2))
 a3t = ct.empty(i2, X_te:size(2))
-softmax_tmpt = ct.empty(1, X_te:size(2))
+tmp_softmaxt = ct.empty(1, X_te:size(2))
 
 ct.dot(W1, X_te, a2t)
 ct.add_mat_vect(a2t, b1, 1)
@@ -86,7 +86,7 @@ ct.tanh(a2t, a2t)
 
 ct.dot(W2, a2t, a3t)
 ct.add_mat_vect(a3t, b2, 1)
-ct.softmax(a3t, softmax_tmpt)
+ct.softmax(a3t, a3t, tmp_softmaxt)
 
 _, p = a3t:float():max(1)
 print(p:ne(y_te):float():mean())
