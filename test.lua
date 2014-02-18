@@ -1,5 +1,7 @@
 require 'ct'
 require 'Test'
+require 'nn'
+require 'cunn'
 
 test = {}
 function test.Linear()
@@ -26,12 +28,12 @@ function test.CCECriterion()
    print(testCriterion(m, i, t))
 end
 
-test = {}
 function test.MSECriterion()
    m = ct.MSECriterion()
-   i = ct.randn(5, 3)
-   t = ct.randn(5, 3)
-   print(testCriterion(m, i, t))
+   i = ct.randn(2, 5)
+   t = ct.randn(2, 5)
+
+   assert(testCriterion(m, i, t) < 1e-2)
 end
 
 for k, v in pairs(test) do

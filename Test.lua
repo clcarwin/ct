@@ -69,8 +69,5 @@ function testCriterion(module, input, target)
       sinput[i] = orig
    end
 
-   print(grad_hat:resize(3, 5))
-   print(module.gradInput:t())
-
    return module.gradInput:t():double():add(-1, grad_hat):abs():max()
 end
